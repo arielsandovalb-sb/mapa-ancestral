@@ -145,7 +145,7 @@ body.tv #tvstamp b{color:#141a22}
   <div class="kpi" style="--c:var(--act)"><b id="k-act">–</b><span>Activos (al día o atrasado leve)</span></div>
   <div class="kpi" style="--c:var(--dor)"><b id="k-dor">–</b><span>Dormidos (riesgo de fuga)</span></div>
   <div class="kpi" style="--c:var(--per)"><b id="k-per">–</b><span>Perdidos (fugados, +1 año, bajas)</span></div>
-  <div class="kpi" style="--c:var(--dis)"><b id="k-dis">–</b><span>Tiendas de distribuidores</span></div>
+  <div class="kpi" style="--c:var(--dis)"><b id="k-dis">–</b><span>Tiendas vía distribuidor (no son clientes directos)</span></div>
  </div>
 </header>
 <nav class="tabs" role="tablist" aria-label="Vistas">
@@ -159,7 +159,7 @@ body.tv #tvstamp b{color:#141a22}
  <button class="chip" data-cat="activo" aria-pressed="true"><i class="dot" style="--c:var(--act)"></i>Activos</button>
  <button class="chip" data-cat="dormido" aria-pressed="true"><i class="dot" style="--c:var(--dor)"></i>Dormidos</button>
  <button class="chip" data-cat="perdido" aria-pressed="true"><i class="dot" style="--c:var(--per)"></i>Perdidos</button>
- <button class="chip" data-cat="dist" aria-pressed="true"><i class="dot" style="--c:var(--dis);--s:var(--disS)"></i>Distribuidores</button>
+ <button class="chip" data-cat="dist" aria-pressed="true"><i class="dot" style="--c:var(--dis);--s:var(--disS)"></i>Vía distribuidor</button>
  <button class="chip" id="choro" aria-pressed="true">Color por comuna</button>
  <input id="q" class="grow" type="search" placeholder="Buscar cliente, tienda o comuna" aria-label="Buscar">
  <button id="solo" aria-pressed="false" title="Ver solo el mapa a pantalla completa (Esc para volver)">Solo mapa</button>
@@ -178,12 +178,12 @@ body.tv #tvstamp b{color:#141a22}
  <div id="rstrip" role="toolbar" aria-label="Regiones"><button id="rplay" aria-pressed="false" title="Recorre las regiones automáticamente">▶ Rotar</button><div id="rchips"></div><div class="rprog"><i id="rbar"></i></div></div></div>
  <aside>
   <h2>Por región</h2>
-  <table id="treg"><thead><tr><th>Región</th><th title="Activos">Act.</th><th title="Dormidos">Dor.</th><th title="Perdidos">Per.</th><th title="Tiendas de distribuidores">Dist.</th></tr></thead><tbody></tbody></table>
+  <table id="treg"><thead><tr><th>Región</th><th title="Activos">Act.</th><th title="Dormidos">Dor.</th><th title="Perdidos">Per.</th><th title="Tiendas vía distribuidor (no son clientes directos)">Vía dist.</th></tr></thead><tbody></tbody></table>
   <h2 id="tcom-h">Comunas RM con más pérdidas</h2>
   <table id="tcom"><thead><tr><th>Comuna</th><th>Activos</th><th>Dorm.+perd.</th></tr></thead><tbody></tbody></table>
   <h2>Bajas confirmadas y motivo</h2>
   <ul class="list" id="lbaj"></ul>
-  <h2>Tiendas de distribuidores <span class="note">(con Ancestral, fuera de nuestra cartera)</span></h2>
+  <h2>Tiendas vía distribuidor <span class="note">(venden Ancestral, no están en nuestra cartera)</span></h2>
   <ul class="list" id="ldis"></ul>
   <h2>Aparecen en la web, pero dormidos o perdidos en Odoo</h2>
   <ul class="list" id="lweb"></ul>
@@ -194,8 +194,8 @@ body.tv #tvstamp b{color:#141a22}
 </div>
 <div class="legend">
  <span><i class="dot" style="--c:var(--act)"></i>Activo</span><span><i class="dot" style="--c:var(--dor)"></i>Dormido</span><span><i class="dot" style="--c:var(--per)"></i>Perdido</span>
- <span><i class="dot" style="--c:var(--dis);--s:var(--disS)"></i>Tienda de distribuidor</span>
- <span><i class="dot" style="--c:#fff;--s:#141a22"></i>Borde grueso = distribuidor (Caylo, Nutrasur, G. Espejo)</span>
+ <span><i class="dot" style="--c:var(--dis);--s:var(--disS)"></i>Tienda que compra a un distribuidor (no está en nuestra cartera)</span>
+ <span><i class="dot" style="--c:#fff;--s:#141a22"></i>Borde grueso = distribuidor directo (Caylo, Nutrasur, G. Espejo)</span>
  <span>Punto chico = sucursal según la web</span><span>Borde punteado = ubicación aproximada (centro de la comuna)</span>
 </div>
 <script src="leaflet.js"></script><script src="crypto-js.min.js"></script>
@@ -711,11 +711,11 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         activo: 'Activo',
         dormido: 'Dormido',
         perdido: 'Perdido',
-        dist: 'Tienda de distribuidor'
+        dist: 'Vía distribuidor'
       }[p.cat];
-      if (p.t === 'y') return "<div class=\"pp\"><h3>" + esc(p.n) + "</h3><span class=\"tag\" style=\"--c:#9a7400\">" + lab + "</span><dl><dt>Direcci\xF3n</dt><dd>" + esc(p.d) + "</dd><dt>Regi\xF3n</dt><dd>" + esc(p.r) + "</dd>" + (p.s ? "<dt>Web/IG</dt><dd>" + esc(p.s) + "</dd>" : '') + "</dl><p class=\"note\">Aparece en ancestralpetfood.cl/donde-comprar y no cruza con la cartera de Odoo.</p></div>";
+      if (p.t === 'y') return "<div class=\"pp\"><h3>" + esc(p.n) + "</h3><span class=\"tag\" style=\"--c:#ffd60a\">Compra a un distribuidor \xB7 no es cliente directo</span><dl><dt>Direcci\xF3n</dt><dd>" + esc(p.d) + "</dd><dt>Regi\xF3n</dt><dd>" + esc(p.r) + "</dd>" + (p.s ? "<dt>Web/IG</dt><dd>" + esc(p.s) + "</dd>" : '') + "</dl><p class=\"note\">Aparece en ancestralpetfood.cl/donde-comprar y no cruza con la cartera de Odoo.</p></div>";
       if (p.t === 's') return "<div class=\"pp\"><h3>" + esc(p.n) + "</h3><span class=\"tag\" style=\"--c:" + COL[p.cat] + "\">" + lab + " \xB7 sucursal</span><dl><dt>Cliente Odoo</dt><dd>" + esc(p.m) + "</dd><dt>Direcci\xF3n</dt><dd>" + esc(p.d) + "</dd><dt>Vendedor</dt><dd>" + esc(p.v) + "</dd></dl><p class=\"note\">Sucursal seg\xFAn la web de Ancestral; el estado es el del cliente.</p></div>";
-      return "<div class=\"pp\"><h3>" + esc(p.n) + "</h3>" + (p.m ? "<div class=\"note\">" + esc(p.m) + "</div>" : '') + "<span class=\"tag\" style=\"--c:" + COL[p.cat] + "\">" + lab + " \xB7 " + esc(p.est) + "</span>" + (p.dist ? ' <span class="tag" style="--c:#141a22">Distribuidor</span>' : '') + "\n      <dl><dt>Vendedor</dt><dd>" + esc(p.v) + "</dd><dt>Direcci\xF3n</dt><dd>" + esc(p.d) + (p.ap ? ' <i>(aprox.)</i>' : '') + "</dd>\n      <dt>\xDAltima entrega</dt><dd><span class=\"nw\">" + fdate(p.u) + "</span> (hace " + p.dd + " d\xEDas)</dd><dt>Compra cada</dt><dd>" + p.cy + " d\xEDas" + (p.nc === 1 ? ' (cliente nuevo)' : '') + "</dd>\n      <dt>Venta 12 meses</dt><dd><span class=\"nw\">" + clp(p.v12) + "</span> \xB7 " + p.p12 + " pedidos</dd><dt>Cliente desde</dt><dd class=\"nw\">" + fdate(p.pr) + "</dd>\n      " + (p.pe ? "<dt>Por entregar</dt><dd>" + esc(p.pe) + "</dd>" : '') + "</dl>" + (p.nb ? "<p class=\"motivo\"><b>Motivo de t\xE9rmino:</b> " + esc(p.nb) + "</p>" : '') + (p.nt ? "<p class=\"nventas\"><b>Nota de ventas:</b> " + esc(p.nt) + "</p>" : '') + "</div>";
+      return "<div class=\"pp\"><h3>" + esc(p.n) + "</h3>" + (p.m ? "<div class=\"note\">" + esc(p.m) + "</div>" : '') + "<span class=\"tag\" style=\"--c:" + COL[p.cat] + "\">" + lab + " \xB7 " + esc(p.est) + "</span>" + (p.dist ? ' <span class="tag" style="--c:#141a22">Distribuidor directo</span>' : '') + "\n      <dl><dt>Vendedor</dt><dd>" + esc(p.v) + "</dd><dt>Direcci\xF3n</dt><dd>" + esc(p.d) + (p.ap ? ' <i>(aprox.)</i>' : '') + "</dd>\n      <dt>\xDAltima entrega</dt><dd><span class=\"nw\">" + fdate(p.u) + "</span> (hace " + p.dd + " d\xEDas)</dd><dt>Compra cada</dt><dd>" + p.cy + " d\xEDas" + (p.nc === 1 ? ' (cliente nuevo)' : '') + "</dd>\n      <dt>Venta 12 meses</dt><dd><span class=\"nw\">" + clp(p.v12) + "</span> \xB7 " + p.p12 + " pedidos</dd><dt>Cliente desde</dt><dd class=\"nw\">" + fdate(p.pr) + "</dd>\n      " + (p.pe ? "<dt>Por entregar</dt><dd>" + esc(p.pe) + "</dd>" : '') + "</dl>" + (p.nb ? "<p class=\"motivo\"><b>Motivo de t\xE9rmino:</b> " + esc(p.nb) + "</p>" : '') + (p.nt ? "<p class=\"nventas\"><b>Nota de ventas:</b> " + esc(p.nt) + "</p>" : '') + "</div>";
     }
     var inReg = function inReg(p, r) {
       return r === 'Chile' ? true : r === 'Gran Santiago' ? p.r === 'Metropolitana' && GSK.has(kk(p.cm)) : p.r === r;
@@ -872,7 +872,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     var nAp = P.filter(function (p) {
       return p.ap;
     }).length;
-    $('nota').textContent = "Estados seg\xFAn la rotaci\xF3n por fecha de entrega en Odoo (datos al " + fdate(data.hoy) + "). Tiendas de distribuidores: listado de " + data.fuente_web + " que no cruza con la cartera por direcci\xF3n, nombre o ubicaci\xF3n. " + nAp + " puntos tienen ubicaci\xF3n aproximada.";
+    $('nota').textContent = "Estados seg\xFAn la rotaci\xF3n por fecha de entrega en Odoo (datos al " + fdate(data.hoy) + "). Tiendas v\xEDa distribuidor: listado de " + data.fuente_web + " que no cruza con la cartera por direcci\xF3n, nombre o ubicaci\xF3n. " + nAp + " puntos tienen ubicaci\xF3n aproximada.";
     function choro() {
       var A = {},
         Lo = {},
@@ -1234,13 +1234,13 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
           }).length;
         };
       $('rt-h').textContent = TIT(st.reg);
-      $('rt-p').innerHTML = [['activo', 'activo'], ['dormido', 'dormido'], ['perdido', 'perdido'], ['dist', 'distribuidor']].filter(function (_ref8) {
+      $('rt-p').innerHTML = [['activo', 'activo'], ['dormido', 'dormido'], ['perdido', 'perdido'], ['dist', 'vía distribuidor']].filter(function (_ref8) {
         var c = _ref8[0];
         return n(c);
       }).map(function (_ref9) {
         var c = _ref9[0],
           l = _ref9[1];
-        return "<i style=\"--c:" + COL[c] + "\"></i>" + n(c) + " " + l + (n(c) === 1 ? '' : c === 'dist' ? 'es' : 's');
+        return "<i style=\"--c:" + COL[c] + "\"></i>" + n(c) + " " + l + (n(c) === 1 || c === 'dist' ? '' : 's');
       }).join('') || 'Sin puntos con estos filtros';
     }
     // tiempos (Ariel, 26-11, +2 s a todo): GS 9 s; Chile, RM y Valparaíso 7 s; solo perdidos 4 s; resto 5 s
