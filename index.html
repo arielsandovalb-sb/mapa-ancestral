@@ -510,7 +510,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       hab = _ref.hab;
     var P = data.puntos;
     var map = L.map('map', {
-      preferCanvas: true,
+      preferCanvas: !TV,
       zoomSnap: .25,
       zoomDelta: .5,
       wheelPxPerZoomLevel: 240,
@@ -527,10 +527,12 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     };
     map.createPane('land').style.zIndex = 300;
     map.createPane('com').style.zIndex = 380;
-    var landR = L.canvas({
+    // TV: SVG en vez de canvas (el navegador del Samsung descuadra las capas canvas, 26-11)
+    var RND = TV ? L.svg : L.canvas,
+      landR = RND({
         pane: 'land'
       }),
-      comR = L.canvas({
+      comR = RND({
         pane: 'com'
       });
     var regLayer = L.geoJSON(regiones, {
